@@ -47,7 +47,7 @@ def logout():
 def sign_up():
     # Redirect logged-in users
     if 'User_id' in session:
-        return redirect(url_for('auth.profile'))  # Adjust the redirection as needed
+        return redirect(url_for('auth.home'))  # Adjust the redirection as needed
 
     if request.method == 'POST':
         email = request.form.get('email', '')
