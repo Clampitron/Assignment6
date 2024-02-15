@@ -94,15 +94,37 @@ def my_recipe():
     return redirect(url_for('auth.login'))
 
 
-@auth.route('/Found-Recipes', methods=['POST'])
+@auth.route('/Found-Recipes', methods=['GET', 'POST'])
 def Found_Recipes():
-    # Capture the selected options
-    cuisine = request.form['cuisine']
-    type = request.form['type']
-    lifestyle = request.form['lifestyle']
+    # Default message for direct navigation or incomplete selections
+    message = "Please go back to the home page to select preferences."
 
-    # Pass the selected options directly to the template
-    return render_template("Found_Recipes.html", cuisine=cuisine, type=type, lifestyle=lifestyle)
+    if request.method == 'POST':
+        cuisine = request.form.get('cuisine')
+        type = request.form.get('type')
+        lifestyle = request.form.get('lifestyle')
+
+        # Validate selections
+        if cuisine and type and lifestyle:
+            # Store validated preferences in session
+            session['recipe_preferences'] = {
+                'cuisine': cuisine,
+                'type': type,
+                'lifestyle': lifestyle
+            }
+        else:
+            # If any selection is missing, flash a message and redirect back to home
+            flash('You must select one option from each category.', 'error')
+            return redirect(url_for('auth.home'))
+
+    # Retrieve preferences for rendering or show default message
+    preferences = session.get('recipe_preferences')
+
+    if preferences:
+        return render_template("Found_Recipes.html", preferences=preferences)
+    else:
+        # If directly accessed or after failed validation with session cleared
+        return render_template("Found_Recipes.html", message=message)
 
 
 @auth.route('/')
