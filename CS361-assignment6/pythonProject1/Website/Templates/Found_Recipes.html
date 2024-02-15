@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Found Recipes</h1>
+{% if cuisine and type and lifestyle %}
+<h4>Based on your preferences, {{ lifestyle }}, {{ cuisine }}, {{ type }}  we found these links:</h4>
+{% else %}
+<h4>Please select your preferences to see recommended recipes.</h4>
+{% endif %}
+{% endblock %}
