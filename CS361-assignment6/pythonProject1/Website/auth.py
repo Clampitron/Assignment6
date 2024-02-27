@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from . import db
+import requests
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-auth = Blueprint('auth', __name__)
 
+auth = Blueprint('auth', __name__)
+url_list = []
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -112,6 +114,14 @@ def Found_Recipes():
                 'type': type,
                 'lifestyle': lifestyle
             }
+            # Call microservice and return URL list that match the preferences
+            r = requests.post('http://localhost:5001/mserivce', data=session['recipe_preferences'])
+            if r.status_code == 200:
+                url_list = r.json()
+                print(url_list)
+            else:
+                flash('Failed to retrieve recipes. Please try again later.', 'error')
+                return redirect(url_for('auth.home'))
         else:
             # If any selection is missing, flash a message and redirect back to home
             flash('You must select one option from each category.', 'error')
