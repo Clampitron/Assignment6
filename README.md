@@ -44,3 +44,7 @@ The `MServer` class is there to create a HTTP server that the website will call 
 #### get_recipes
 
 The get_recipes method creates the request needed to call the search engine API and format the response into the `url_list` variable.
+
+UML sequence Diagram
+![image](https://github.com/Clampitron/Assignment6/assets/44421203/4b353be4-b860-4dcc-a663-24ffeefec1fa)
+
