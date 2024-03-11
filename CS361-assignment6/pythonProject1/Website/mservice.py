@@ -87,7 +87,7 @@ class MServer(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     with open(r".\api.key", "r", encoding="utf8") as file:
         params["api_key"] = file.readline()
-        if not params["api_key"] or len(params["api_key"]) != 64:
+        if not params["api_key"]:
             raise NoAPIKeyError
     webServer = HTTPServer((HOST, PORT), MServer)
     print(f"Server started http://{HOST}:{PORT}")
