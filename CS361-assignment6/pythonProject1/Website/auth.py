@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 auth = Blueprint('auth', __name__)
 url_list = []
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
@@ -100,6 +101,7 @@ def my_recipe():
 def Found_Recipes():
     # Default message for direct navigation or incomplete selections
     message = "Please go back to the home page to select preferences."
+    url_list = []
 
     if request.method == 'POST':
         cuisine = request.form.get('cuisine')
@@ -115,7 +117,7 @@ def Found_Recipes():
                 'lifestyle': lifestyle
             }
             # Call microservice and return URL list that match the preferences
-            r = requests.post('http://localhost:5001/mserivce', data=session['recipe_preferences'])
+            r = requests.post('http://localhost:5001/mservice', data=session['recipe_preferences'])
             if r.status_code == 200:
                 url_list = r.json()
                 print(url_list)
@@ -128,13 +130,13 @@ def Found_Recipes():
             return redirect(url_for('auth.home'))
 
     # Retrieve preferences for rendering or show default message
-    preferences = session.get('recipe_preferences')
+    preferences = session.get('recipe_preferences', [])
 
     if preferences:
         return render_template("Found_Recipes.html", preferences=preferences)
     else:
         # If directly accessed or after failed validation with session cleared
-        return render_template("Found_Recipes.html", message=message)
+        return render_template("Found_Recipes.html", preferences=preferences, url_list=url_list, message=message)
 
 
 @auth.route('/')

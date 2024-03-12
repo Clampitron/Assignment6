@@ -4,6 +4,15 @@
 <h1>Found Recipes</h1>
 {% if preferences %}
     <h4>Based on your preferences, {{ preferences.cuisine }}, {{ preferences.type }}, and {{ preferences.lifestyle }} we found these links:</h4>
+    {% if url_list %}
+        <ul>
+            {% for url in url_list %}
+                <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recipes found. Try adjusting your preferences.</p>
+    {% endif %}
 {% else %}
     <h4>{{ message }}</h4>
 {% endif %}
