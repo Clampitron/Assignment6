@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, jsonify
 from . import db
 import requests
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from .models import Bookmark
 
 
 auth = Blueprint('auth', __name__)
@@ -90,11 +91,11 @@ def sign_up():
 @auth.route('/My-Recipe')
 def my_recipe():
     user_id = session.get('User_id')
-    if user_id:
-        user = User.query.get(user_id)
-        if user:
-            return render_template("My_recipes.html", firstname=user.firstname)
-    return redirect(url_for('auth.login'))
+    if user_id is not None:
+        bookmarks = Bookmark.query.filter_by(user_id=user_id).all()
+        return render_template("My_recipes.html", bookmarks=bookmarks)
+    else:
+        return redirect(url_for('auth.login'))
 
 
 @auth.route('/Found-Recipes', methods=['GET', 'POST'])
@@ -134,6 +135,26 @@ def Found_Recipes():
     preferences = session.get('recipe_preferences', [])
 
     return render_template("Found_Recipes.html", preferences=preferences, url_list=url_list, message=message)
+
+
+@auth.route('/bookmark', methods=['POST'])
+def bookmark_recipe():
+    if 'User_id' not in session:
+        return jsonify({'error': 'User not logged in'}), 403
+
+    data = request.get_json()
+    url = data.get('url')
+    user_id = session.get('User_id')
+
+    # Assuming you have a Bookmark model with a user_id and url field
+    new_bookmark = Bookmark(user_id=user_id, url=url)
+    db.session.add(new_bookmark)
+    try:
+        db.session.commit()
+        return jsonify({'message': 'Bookmark added successfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to add bookmark'}), 500
 
 
 @auth.route('/')

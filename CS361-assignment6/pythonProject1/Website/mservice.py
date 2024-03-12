@@ -84,7 +84,7 @@ class MServer(BaseHTTPRequestHandler):
         search_results = GoogleSearch(params).get_dict()
         links = []
         # Add general search results to links
-        if search_results["recipes_results"]:
+        if "recipes_results" in search_results.keys():
             for recipe in search_results["recipes_results"]:
                 links.append(recipe["link"])
         if search_results["organic_results"]:

@@ -23,8 +23,19 @@
 
 <script>
 function bookmarkUrl(url) {
-    // Placeholder for bookmark functionality
-    alert("Bookmark added for: " + url);
-    // Implement actual bookmarking logic here
+    $.ajax({
+        type: "POST",
+        url: "/bookmark",  // Ensure this is the correct endpoint in your Flask app
+        data: JSON.stringify({'url': url}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(response) {
+            alert("Bookmark added successfully!");
+        },
+        error: function(response) {
+            alert("Error adding bookmark.");
+        }
+    });
 }
 </script>
+

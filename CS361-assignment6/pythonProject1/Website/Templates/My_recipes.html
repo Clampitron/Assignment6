@@ -4,4 +4,14 @@
 <h1>My Recipes</h1>
 <h2>Welcome, {{ firstname }}!</h2>
 
+{% if bookmarks %}
+    <ul>
+    {% for bookmark in bookmarks %}
+        <li><a href="{{ bookmark.url }}" target="_blank">{{ bookmark.url }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No bookmarks found.</p>
+{% endif %}
+
 {% endblock %}

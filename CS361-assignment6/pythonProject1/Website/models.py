@@ -1,8 +1,6 @@
 from . import db  # Import the database instance
-from flask_login import UserMixin
 
-class User(db.Model, UserMixin):
+class Bookmark(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    firstname = db.Column(db.String(150), nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    url = db.Column(db.String(255))
