@@ -5,7 +5,7 @@
 Program to start a microservice that will find recipes on the internet given a specific lifestyle,
 cuisine, and type.
 """
-
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import dumps
 from urllib.parse import parse_qs
@@ -31,7 +31,7 @@ class NoAPIKeyError(Exception):
     Attributes:
         message -- explanation of the error
     """
-    def __init__(self, message = "No API key or incorrect API key in api.key file"):
+    def __init__(self, message="No API key or incorrect API key in api.key file"):
         self.message = message
         super().__init__(self.message)
 
@@ -42,7 +42,7 @@ class MServer(BaseHTTPRequestHandler):
     the user wanted.
     """
 
-    def do_POST(self) -> None:
+    def do_POST(self):
         """
         A method to handle HTTP POST requests to the server.
 
@@ -51,19 +51,28 @@ class MServer(BaseHTTPRequestHandler):
         :returns: None
         """
         content_length = int(self.headers['Content-Length'])  # Get the size of data
-        post_data = self.rfile.read(content_length).decode()  # Get the data
-        parsed_dict = parse_qs(post_data)
-        result_dict = {k: v[0] for k, v in parsed_dict.items()} # Convert lists to single values
-        lifestyle = result_dict["lifestyle"]
-        cuisine = result_dict["cuisine"]
-        food_type = result_dict["type"]
-        params["q"] = f"{lifestyle} {cuisine} {food_type} recipes"
-        links = self.__get_recipes()
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        json_data = dumps({"links": links})
-        self.wfile.write(json_data.encode())    # Send HTTP response to server
+        post_data = self.rfile.read(content_length)  # Read the data
+        result_dict = json.loads(post_data.decode('utf-8'))  # Decode and load JSON data
+
+        lifestyle = result_dict.get("lifestyle")
+        cuisine = result_dict.get("cuisine")
+        food_type = result_dict.get("type")
+
+        if lifestyle and cuisine and food_type:
+            params["q"] = f"{lifestyle} {cuisine} {food_type} recipes"
+            links = self.__get_recipes()
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            json_data = dumps({"links": links})
+            self.wfile.write(json_data.encode())
+        else:
+            # If required data isn't provided, send an error response
+            self.send_response(400)  # Bad Request status code
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            error_message = dumps({"error": "Missing lifestyle, cuisine, or food type in request."})
+            self.wfile.write(error_message.encode())
 
 
     def __get_recipes(self) -> list[str]:

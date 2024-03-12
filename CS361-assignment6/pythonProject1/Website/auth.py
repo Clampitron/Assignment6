@@ -116,10 +116,11 @@ def Found_Recipes():
                 'type': type,
                 'lifestyle': lifestyle
             }
+            headers = {'Content-Type': 'application/json'}
             # Call microservice and return URL list that match the preferences
-            r = requests.post('http://localhost:5001/mservice', data=session['recipe_preferences'])
+            r = requests.post('http://localhost:5001/mservice', json=session['recipe_preferences'])
             if r.status_code == 200:
-                url_list = r.json()
+                url_list = r.json().get('links', [])
                 print(url_list)
             else:
                 flash('Failed to retrieve recipes. Please try again later.', 'error')
@@ -132,11 +133,7 @@ def Found_Recipes():
     # Retrieve preferences for rendering or show default message
     preferences = session.get('recipe_preferences', [])
 
-    if preferences:
-        return render_template("Found_Recipes.html", preferences=preferences)
-    else:
-        # If directly accessed or after failed validation with session cleared
-        return render_template("Found_Recipes.html", preferences=preferences, url_list=url_list, message=message)
+    return render_template("Found_Recipes.html", preferences=preferences, url_list=url_list, message=message)
 
 
 @auth.route('/')
