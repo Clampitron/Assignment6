@@ -8,7 +8,6 @@ cuisine, and type.
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import dumps
-from urllib.parse import parse_qs
 from serpapi import GoogleSearch        # pip install google-search-results
 
 
