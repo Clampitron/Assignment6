@@ -7,10 +7,10 @@
     {% if url_list %}
         <ul>
             {% for url in url_list %}
-        <li class="d-flex align-items-center">
-            <button class="btn btn-outline-primary mr-2" onclick="bookmarkUrl('{{ url }}')">Bookmark</button>
-            <a href="{{ url }}" target="_blank">{{ url }}</a>
-        </li>
+                <li class="d-flex align-items-center">
+                    <button class="btn btn-outline-primary mr-2" onclick="bookmarkUrl('{{ url }}')">Bookmark</button>
+                    <a href="{{ url }}" target="_blank">{{ url }}</a>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
@@ -25,7 +25,7 @@
 function bookmarkUrl(url) {
     $.ajax({
         type: "POST",
-        url: "/bookmark",  // Ensure this is the correct endpoint in your Flask app
+        url: "/bookmark",
         data: JSON.stringify({'url': url}),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -39,3 +39,6 @@ function bookmarkUrl(url) {
 }
 </script>
 
+<!-- jQuery should be included only once and ideally in the base template -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bookmark.js') }}"></script>

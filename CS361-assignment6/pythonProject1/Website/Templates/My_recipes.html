@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block title %}My Recipe{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}My Recipe{% endblock %}
 
 {% block content %}
 <h1>My Recipes</h1>
@@ -13,5 +15,8 @@
 {% else %}
     <p>No bookmarks found.</p>
 {% endif %}
-
 {% endblock %}
+
+<!-- jQuery and bookmark.js should be included within the base template, ideally, or here if not using a base template -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/bookmark.js') }}"></script>

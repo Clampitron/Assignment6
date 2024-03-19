@@ -92,10 +92,19 @@ def sign_up():
 def my_recipe():
     user_id = session.get('User_id')
     if user_id is not None:
+        # Fetch the user's first name from the database
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            firstname = user.firstname
+        else:
+            firstname = "User"  # Fallback in case the user is not found
+
         bookmarks = Bookmark.query.filter_by(user_id=user_id).all()
-        return render_template("My_recipes.html", bookmarks=bookmarks)
+        # Pass the user's first name along with bookmarks to the template
+        return render_template("My_recipes.html", bookmarks=bookmarks, firstname=firstname)
     else:
         return redirect(url_for('auth.login'))
+
 
 
 @auth.route('/Found-Recipes', methods=['GET', 'POST'])
